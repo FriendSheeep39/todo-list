@@ -1,0 +1,38 @@
+{
+  "name": "webserver",
+  "version": "1.0.0",
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
+  },
+  "scripts": {
+    "build": "tsc",
+    "server-dev": "npx nodemon app.ts",
+    "start": "node dist/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/mysql": "^2.15.26",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "http-status-codes": "^2.3.0",
+    "mariadb": "^3.3.1",
+    "mysql": "^2.18.1",
+    "resource-bundle": "^0.1.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.9",
+    "copyfiles": "^2.4.1",
+    "nodemon": "^3.1.4",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
+  }
+}

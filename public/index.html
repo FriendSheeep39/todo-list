@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Server</title>
+    <script defer type="module" src="scripts/script.js"></script>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <h1>Todo List</h1>
+    <div>
+        <span id="total-todos">Loading Todos...</span>
+        <span id="ongoing-todos"></span>
+    </div>
+    <div>
+        <label for="relative-completion">Todo progress:</label>
+        <progress id="relative-completion" value="0" max="100"></progress>
+    </div>
+    <div>
+        <button id="delete-all-btn">Delete All Todos</button>
+        <button id="delete-finished-btn">Delete Finished Todos</button>
+    </div>
+    <div>
+        <button id="filter-btn">Show Ongoing</button>
+    </div>
+    <div>
+        <label for="search-todo">Search Todos: </label>
+        <input type="text" id="search-todo" placeholder="Type to search...">
+    </div>
+    <div>
+        <label for="todo"></label>
+        <input type="text" id="todo">
+        <label for="add-btn"></label>
+        <button id="add-btn">Add</button>
+        <table id="table"></table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+}
+button {
+    margin: 0.2rem;
+}
+table {
+    margin: auto;
+}
+
+div {
+    margin: 1rem;
+}
+
+span {
+    margin-left: 0.5rem;
+}
+
+button {
+    background-color: transparent;
+    margin: 0.2rem;
+    border: 1px solid dimgray; /* Visible border from the start */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px; /* Initial padding */
+    transition: background-color 0.1s ease; /* Animate background color changes */
+}
+
+button:hover {
+    background-color: lightgray; /* Change background color on hover */
+}
+
+.button-clicked {
+    background-color: darkgray; /* Temporary background color on click */
+}
+
+/* Example of dynamically setting the progress value with JavaScript */
+/* This would be set inline on the progress element or updated via a script */
+progress {
+    height: 0.5rem;
+    --progress-value: 50%; /* Example: dynamically update this value based on progress */
+    border-radius: 0.5rem; /* Adjust this value as needed for desired roundness */
+    overflow: hidden; /* Ensures the inner bar respects the border-radius */
+}
+
+progress[value]::-moz-progress-bar { /* For Firefox */
+    background-color: #008cff; /* Green */
+    border-radius: 0.5rem;
+}
+
+.remove-btn {
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: 20px;
+}

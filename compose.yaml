@@ -1,0 +1,38 @@
+services:
+  mariadb:
+    image: mariadb
+    container_name: db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: pat
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_PASSWORD: test
+      MYSQL_DATABASE: db
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - network
+
+  app:
+    build: .
+    container_name: app
+    ports:
+      - "3000:3000"
+      - "80:80"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: test
+      DB_NAME: db
+    depends_on:
+      - mariadb
+    networks:
+      - network
+
+networks:
+    network:
+      driver: bridge
+volumes:
+    db:
