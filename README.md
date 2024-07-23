@@ -10,4 +10,8 @@ docker compose up
 ```
 http://localhost:3000
 ```
+- close the application with
+```
+docker compose down
+```
 # 👍👍👍👍👍
