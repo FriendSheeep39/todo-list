@@ -181,7 +181,7 @@ async function renderTodo(todo: Todo) {
     });
 
     const button = document.createElement("button");
-    button.innerHTML = "&#10006;"; // HTML entity for the Unicode character '✖'
+    button.innerHTML = "&#10006;";
     button.classList.add("remove-btn");
     button.addEventListener("click", async () => {
         if (confirm("Do you want to delete this todo?")) {
