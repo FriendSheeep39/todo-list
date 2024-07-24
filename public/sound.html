@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Idk what im doing</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/piano.css">
+    <script src="scripts/sounds.js"></script>
+</head>
+<body>
+    <h1>Osc</h1>
+    <!--
+    <div>
+        <label for="attack">Attack (0-1s): </label>
+        <input type="range" id="attack" name="attack" min="0" max="1" step="0.001" value="0.06">
+        <label for="release">Release (0-1s): </label>
+        <input type="range" id="release" name="release" min="0" max="1" step="0.01" value="0.5">
+    </div>
+    -->
+    <div>
+        <label for="detune">Detune: </label>
+        <input type="range" id="detune" min="0" max="10" step="0.01" value="5">
+        <label for="filterCutoff">Filter Cutoff: </label>
+        <input type="range" id="filterCutoff" min="20" max="20000" value="20000" step="1">
+    </div>
+    <div>
+        <button id="sine-btn">Sine</button>
+        <button id="square-btn">Square</button>
+        <button id="sawtooth-btn">Sawtooth</button>
+        <button id="triangle-btn">Triangle</button>
+    </div>
+    <div class="piano">
+        <div class="white-key" data-note="q">q</div>
+        <div class="black-key" data-note="2">2</div>
+        <div class="white-key" data-note="w">w</div>
+        <div class="black-key" data-note="3">3</div>
+        <div class="white-key" style="margin-right: 0.5px" data-note="e">e</div>
+        <div class="white-key" data-note="r">r</div>
+        <div class="black-key" data-note="5">5</div>
+        <div class="white-key" data-note="t">t</div>
+        <div class="black-key" data-note="6">6</div>
+        <div class="white-key" data-note="z">z</div>
+        <div class="black-key" data-note="7">7</div>
+        <div class="white-key" style="margin-right: 0.5px" data-note="u">u</div>
+        <div class="white-key" data-note="i">i</div>
+        <div class="black-key" data-note="9">9</div>
+        <div class="white-key" data-note="o">o</div>
+        <div class="black-key" data-note="0">0</div>
+        <div class="white-key" data-note="p">p</div>
+    </div>
+
+    <div class="piano">
+        <div class="white-key" id="y" data-note="y">y</div>
+        <div class="black-key" data-note="s">s</div>
+        <div class="white-key" data-note="x">x</div>
+        <div class="black-key" data-note="d">d</div>
+        <div class="white-key" style="margin-right: 0.5px" data-note="c">c</div>
+        <div class="white-key" data-note="v">v</div>
+        <div class="black-key" data-note="g">g</div>
+        <div class="white-key" data-note="b">b</div>
+        <div class="black-key" data-note="h">h</div>
+        <div class="white-key" data-note="n">n</div>
+        <div class="black-key" data-note="j">j</div>
+        <div class="white-key" style="margin-right: 0.5px" data-note="m">m</div>
+        <div class="white-key" data-note=",">,</div>
+        <div class="black-key" data-note="l">l</div>
+        <div class="white-key" data-note=".">.</div>
+        <div class="black-key" data-note="ö">ö</div>
+        <div class="white-key" data-note="-">-</div>
+    </div>
+
+    <div style="position:fixed;bottom:10%;right: 49%">
+        <a href="index.html">sus</a>
+    </div>
+</body>
+</html>

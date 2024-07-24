@@ -13,6 +13,11 @@ div {
     margin: 1rem;
 }
 
+a {
+    text-decoration: none;
+    color: -moz-default-color;
+}
+
 span {
     margin-left: 0.5rem;
 }

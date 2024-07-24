@@ -129,6 +129,10 @@ async function loadTodos() {
 async function addTodo() {
     const input = (document.getElementById("todo") as HTMLInputElement).value;
 
+    if (todosList.find(todo => todo.task === input)) {
+        return alert("Todo already exists");
+    }
+
     if (input === "") {
         return alert("Please enter a todo");
     }
