@@ -11,7 +11,6 @@ export class Pool {
         leakDetectionTimeout: 5000,
         trace: true
     });
-
     public async init() {
         try {
             await this._pool.getConnection().then(conn => {

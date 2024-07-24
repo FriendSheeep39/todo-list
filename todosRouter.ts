@@ -32,19 +32,25 @@ todosRouter.post('/', async (req, res) => {
         if (t.task === todo.task) {
             res.sendStatus(StatusCodes.BAD_REQUEST);
         }
-    })).catch(err => {
+    }))
+    .then(async () => {
+        if (res.statusCode === StatusCodes.BAD_REQUEST) {
+            return;
+        }
+        await pool.addTodo(todo)
+            .then(() => {
+                res.sendStatus(StatusCodes.CREATED);
+            })
+            .catch(err => {
+                console.log("Error: " + err);
+                res.sendStatus(StatusCodes.BAD_REQUEST);
+            });
+    })
+    .catch(err => {
+        console.log("Errorstuff");
         console.log("Error: " + err);
         res.sendStatus(StatusCodes.BAD_REQUEST);
     });
-
-    await pool.addTodo(todo)
-        .then(() => {
-            res.sendStatus(StatusCodes.CREATED);
-        })
-        .catch(err => {
-            console.log("Error: " + err);
-            res.sendStatus(StatusCodes.BAD_REQUEST);
-        });
 });
 
 todosRouter.put('/', async (req, res) => {
