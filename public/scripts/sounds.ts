@@ -1,4 +1,6 @@
-document.addEventListener('DOMContentLoaded', async () => await initialize());
+document.addEventListener('DOMContentLoaded', async () => initialize());
+
+let audioCtx;
 
 async function initialize() {
     const keyNoteMap = new Map<string, number>([
@@ -40,13 +42,49 @@ async function initialize() {
         ['p', 1318.51], // E
     ]);
 
-    const audioCtx = new AudioContext();
-    const activeOsc = new Map<string, OscillatorNode[]>();
+    const activeOsc = new Map<string, { oscillators: OscillatorNode[], gainNode: GainNode }>();
+    audioCtx = new AudioContext();
+
+
+    // Effects
+    //
+    //
+
+    const distortion = audioCtx.createWaveShaper();
+    distortion.oversample = '4x';
+
     const filter = audioCtx.createBiquadFilter();
-    filter.type = 'lowpass';
+    filter.type = 'allpass';
     filter.frequency.setValueAtTime(20000, audioCtx.currentTime);
+    const gain = audioCtx.createGain();
+    gain.connect(filter);
     filter.connect(audioCtx.destination);
 
+    document.getElementById('distortionToggle').addEventListener('click', () => {
+        if ((document.getElementById('distortionToggle') as HTMLInputElement).checked) {
+            gain.disconnect();
+            distortion.disconnect();
+            gain.connect(distortion);
+            distortion.connect(filter);
+        }
+        else {
+            distortion.disconnect();
+            gain.disconnect();
+            gain.connect(filter);
+        }
+    });
+
+    document.getElementById('distortionToggle').click();
+
+    distortion.curve = makeDistortionCurve(parseFloat((document.getElementById('distortion') as HTMLInputElement).value));
+    document.getElementById('distortion').addEventListener('input', () => {
+        distortion.curve = makeDistortionCurve(parseFloat((document.getElementById('distortion') as HTMLInputElement).value));
+    });
+
+    document.getElementById('lowpass-btn').addEventListener('click', () => filter.type = 'lowpass');
+    document.getElementById('highpass-btn').addEventListener('click', () => filter.type = 'highpass');
+    document.getElementById('bandpass-btn').addEventListener('click', () => filter.type = 'bandpass');
+    document.getElementById('allpass-btn').addEventListener('click', () => filter.type = 'allpass');
 
     let oscType = 'sine';
     document.getElementById('sine-btn').addEventListener('click', () => oscType = 'sine');
@@ -62,14 +100,31 @@ async function initialize() {
         filter.frequency.setValueAtTime(logValue, audioCtx.currentTime);
     });
 
-    document.getElementById('detune').addEventListener('input', (event) => {
-        const newFrequencyDetune = parseFloat((event.target as HTMLInputElement).value);
+    //
+    //
+    //
 
-        activeOsc.forEach((oscillators, key) => {
+    document.getElementById('octave-down-btn').addEventListener('click', () => {
+       if (keyNoteMap.get('y') <= (261.63 / 8)) {
+           return;
+       }
+       keyNoteMap.forEach((value, key) => keyNoteMap.set(key, value / 2));
+    });
+
+    document.getElementById('octave-up-btn').addEventListener('click', () => {
+        keyNoteMap.forEach((value, key) => keyNoteMap.set(key, value * 2));
+    });
+
+    document.getElementById('detune').addEventListener('input', (event) => {
+        const newDetuneValue = parseFloat((event.target as HTMLInputElement).value);
+
+        activeOsc.forEach((value, key) => {
             const baseFrequency = keyNoteMap.get(key);
             if (baseFrequency) {
-                oscillators.forEach((osc, index) => {
-                    osc.frequency.setValueAtTime(baseFrequency + (index / (index * newFrequencyDetune - 4) - 1), audioCtx.currentTime);
+                value.oscillators.forEach((osc, index) => {
+                    const detuneAmount = (index / (index * newDetuneValue - 4) - 1);
+                    const newFrequency = baseFrequency + detuneAmount;
+                    osc.frequency.setValueAtTime(newFrequency, audioCtx.currentTime);
                 });
             }
         });
@@ -77,42 +132,95 @@ async function initialize() {
 
     document.addEventListener('keydown', (event) => {
         if (keyNoteMap.has(event.key) && !activeOsc.has(event.key)) {
-            const frequency: number = keyNoteMap.get(event.key);
-            const oscillators: OscillatorNode[] = [];
-            const detune: number = parseFloat((document.getElementById('detune') as HTMLInputElement).value);
+            const frequency = keyNoteMap.get(event.key);
+            const oscillators = [];
+            const noteGain = audioCtx.createGain();
+            noteGain.connect(gain);
+
+            const attack = document.getElementById('attack') as HTMLInputElement;
+            const decay = document.getElementById('decay') as HTMLInputElement;
+            const sustain = document.getElementById('sustain') as HTMLInputElement;
+            applyADSR(noteGain, parseFloat(attack.value), parseFloat(decay.value), parseFloat(sustain.value));
+
 
             for (let i = 0; i < 6; i++) {
-                const osc: OscillatorNode = audioCtx.createOscillator();
+                const osc = audioCtx.createOscillator();
                 osc.type = oscType as OscillatorType;
-                osc.frequency.setValueAtTime(frequency + (i / (i * detune - 4) - 1), audioCtx.currentTime);
-                osc.connect(filter);
+                osc.frequency.setValueAtTime(frequency + (i / (i * parseFloat((document.getElementById('detune') as HTMLInputElement).value) - 4) - 1), audioCtx.currentTime);
+                osc.connect(noteGain);
                 osc.start();
                 oscillators.push(osc);
             }
+            activeOsc.set(event.key, { oscillators, gainNode: noteGain });
 
-            activeOsc.set(event.key, oscillators);
-
-            let keyElement = document.querySelector(`div[data-note="${event.key}"]`);
-            if (keyElement.classList.contains('white-key')) {
-                keyElement.classList.add('white-key-active');
-            } else if (keyElement.classList.contains('black-key')) {
-                keyElement.classList.add('black-key-active');
-            }
+            lightKeys(event.key, true);
         }
     });
 
-    document.addEventListener('keyup', (event) => {
+    document.addEventListener('keyup', async (event) => {
         if (activeOsc.has(event.key)) {
-            const oscillators = activeOsc.get(event.key);
-            oscillators.forEach(osc => osc.stop());
-            activeOsc.delete(event.key);
+            const { oscillators, gainNode } = activeOsc.get(event.key);
 
-            const keyElement = document.querySelector(`div[data-note="${event.key}"]`);
-            if (keyElement.classList.contains('white-key')) {
-                keyElement.classList.remove('white-key-active');
-            } else if (keyElement.classList.contains('black-key')) {
-                keyElement.classList.remove('black-key-active');
+            const releaseTime = parseFloat((document.getElementById('release') as HTMLInputElement).value); // in seconds
+
+            gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtx.currentTime);
+            if (audioCtx.currentTime + releaseTime < audioCtx.currentTime) {
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
             }
+            else {
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + releaseTime);
+            }
+
+            setTimeout(() => {
+                oscillators.forEach(osc => {
+                    osc.stop();
+                    osc.disconnect();
+                });
+                gainNode.disconnect();
+                activeOsc.delete(event.key);
+            }, releaseTime * 1000);
+
+            lightKeys(event.key, false);
         }
     });
+}
+
+function applyADSR(gainNode: GainNode, attack: number, decay: number, sustain: number) {
+    const volume: number = parseFloat((document.getElementById('volume') as HTMLInputElement).value);
+    gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + attack);
+    gainNode.gain.linearRampToValueAtTime(volume * sustain, audioCtx.currentTime + attack + decay);
+}
+
+function makeDistortionCurve(amount) {
+    const k = typeof amount === 'number' ? amount : 50;
+    const n_samples = 44100;
+    const curve = new Float32Array(n_samples);
+    const deg = Math.PI / 180;
+    for (let i = 0; i < n_samples; ++i) {
+        const x = i * 2 / n_samples - 1;
+        curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+    }
+    return curve;
+}
+
+function lightKeys(key: string, activate: boolean) {
+    if (activate) {
+        let keyElement = document.querySelector(`div[data-note="${key}"]`);
+        if (keyElement.classList.contains('white-key')) {
+            keyElement.classList.add('white-key-active');
+        } else if (keyElement.classList.contains('black-key')) {
+            keyElement.classList.add('black-key-active');
+        }
+    }
+    else {
+        let keyElement = document.querySelector(`div[data-note="${key}"]`);
+        if (keyElement.classList.contains('white-key')) {
+            keyElement.classList.remove('white-key-active');
+        } else if (keyElement.classList.contains('black-key')) {
+            keyElement.classList.remove('black-key-active');
+        }
+    }
 }

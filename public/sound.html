@@ -5,29 +5,57 @@
     <title>Idk what im doing</title>
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/piano.css">
+    <link rel="stylesheet" href="styles/sliderRound.css">
     <script src="scripts/sounds.js"></script>
 </head>
 <body>
     <h1>Osc</h1>
-    <!--
     <div>
-        <label for="attack">Attack (0-1s): </label>
-        <input type="range" id="attack" name="attack" min="0" max="1" step="0.001" value="0.06">
-        <label for="release">Release (0-1s): </label>
-        <input type="range" id="release" name="release" min="0" max="1" step="0.01" value="0.5">
-    </div>
-    -->
-    <div>
+        <label for="volume">Volume: </label>
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
         <label for="detune">Detune: </label>
         <input type="range" id="detune" min="0" max="10" step="0.01" value="5">
-        <label for="filterCutoff">Filter Cutoff: </label>
-        <input type="range" id="filterCutoff" min="20" max="20000" value="20000" step="1">
+        <h4>Envelope (0-1s)</h4>
+        <label for="attack">Attack: </label>
+        <input type="range" id="attack" name="attack" min="0" max="1" step="0.001" value="0.03">
+        <label for="decay">Decay: </label>
+        <input type="range" id="decay" name="decay" min="0" max="1" step="0.001" value="0.2">
+        <label for="sustain">Sustain: </label>
+        <input type="range" id="sustain" name="sustain" min="0" max="1" step="0.001" value="0.5">
+        <label for="release">Release: </label>
+        <input type="range" id="release" name="release" min="0" max="1" step="0.001" value="0.1">
     </div>
     <div>
+        <h3>Effects</h3>
+
+        <h4>Filter</h4>
+        <label for="filterCutoff">Filter Cutoff: </label>
+        <input type="range" id="filterCutoff" min="20" max="20000" value="20000" step="1">
+        <button id="lowpass-btn">Lowpass</button>
+        <button id="highpass-btn">Highpass</button>
+        <button id="bandpass-btn">Bandpass</button>
+        <button id="allpass-btn">Allpass</button>
+
+        <h4>Distortion</h4>
+        <label class="switch" style="margin-right: 2px">
+            <input type="checkbox" id="distortionToggle">
+            <span class="slider round"></span>
+        </label>
+
+        <label for="distortion">Distortion: </label>
+        <input type="range" id="distortion" min="0" max="1000" step="0.1" value="0">
+    </div>
+    <div>
+        <h4>Wave form</h4>
         <button id="sine-btn">Sine</button>
         <button id="square-btn">Square</button>
         <button id="sawtooth-btn">Sawtooth</button>
         <button id="triangle-btn">Triangle</button>
+    </div>
+    <div>
+        <h4>Transpose by Octave</h4>
+        <button id="octave-down-btn">-1</button>
+        <button id="octave-up-btn">+1</button>
     </div>
     <div class="piano">
         <div class="white-key" data-note="q">q</div>
